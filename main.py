@@ -1,4 +1,5 @@
 import networkx as nx
+import visualizer
 
 def solve_mission(characters, resource_targets, planet_data, current_assignments=None, switching_cost=1000000):
     if current_assignments is None:
@@ -7,10 +8,15 @@ def solve_mission(characters, resource_targets, planet_data, current_assignments
     G = nx.DiGraph()
     source, sink = "Source", "Sink"
     
+    # Layer 0: Source & Layer 5: Sink (Initial Nodes)
+    G.add_node(source, layer=0)
+    G.add_node(sink, layer=5)
+    
     # --- 1. Graph Construction ---
     
     # Layer 1: Source -> Characters (Capacity = Max Visits)
     for char in characters:
+        G.add_node(char['id'], layer=1)
         G.add_edge(source, char['id'], capacity=char['max_visits'], weight=0)
         
         # Get this character's current planets (if any)
@@ -21,6 +27,8 @@ def solve_mission(characters, resource_targets, planet_data, current_assignments
         # Layer 2: Characters -> Planets (Capacity = 1)
         for planet in planet_data:
             p_id = planet['id']
+            if p_id not in G.nodes:
+                G.add_node(p_id, layer=2)
             
             # Skip if planet is banned for this character
             if 'banned' in char and p_id in char['banned']:
@@ -53,16 +61,22 @@ def solve_mission(characters, resource_targets, planet_data, current_assignments
                 # Node for specific resource on specific planet
                 # e.g., "Planet1|Iron"
                 pr_node = f"{p_id}|{res}"
+                G.add_node(pr_node, layer=3)
                 
                 # Planet -> Planet|Res (Cost = -Abundance)
                 # Capacity is set to len(characters) so multiple people can pick same item
                 G.add_edge(p_id, pr_node, capacity=len(characters), weight=-abundance)
                 
                 # Planet|Res -> Global Resource (Aggregation)
+                if res not in G.nodes:
+                    G.add_node(res, layer=4)
                 G.add_edge(pr_node, res, capacity=len(characters), weight=0)
 
     # Layer 5: Global Resource -> Sink (Capacity = Target Demand)
     for res, target in resource_targets.items():
+        # Ensure resource node exists (it might not if no planet has it)
+        if res not in G.nodes:
+             G.add_node(res, layer=4)
         G.add_edge(res, sink, capacity=target, weight=0)
 
     # --- 2. Solve (Min Cost Max Flow) ---
@@ -70,7 +84,7 @@ def solve_mission(characters, resource_targets, planet_data, current_assignments
         flow_dict = nx.max_flow_min_cost(G, source, sink)
     except nx.NetworkXUnfeasible:
         print("Error: Constraints are too tight. Cannot meet resource demand.")
-        return 0, {}
+        return 0, {}, G, {}
 
     # --- 3. Post-Processing (Generate Work Orders) ---
     
@@ -161,7 +175,7 @@ def solve_mission(characters, resource_targets, planet_data, current_assignments
             else:
                 work_orders[visitor].append(f"{p_id:<25} {'No Collection':<20}")
 
-    return total_abundance, work_orders
+    return total_abundance, work_orders, G, flow_dict
 
 # --- Example Usage ---
 
@@ -360,7 +374,10 @@ current_assignments = {
 # Set high to prioritize stability, or low to prioritize pure yield.
 SWITCHING_COST = 20 
 
-total_yield, orders = solve_mission(chars, targets, planets, current_assignments, SWITCHING_COST)
+total_yield, orders, G, flow_dict = solve_mission(chars, targets, planets, current_assignments, SWITCHING_COST)
+
+# --- Visualize ---
+visualizer.visualize_network(G, flow_dict, filename="solution_network.png")
 
 print(f"Total System Abundance: {total_yield}\n")
 print("--- MISSION ASSIGNMENTS ---")
