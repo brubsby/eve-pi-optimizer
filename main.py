@@ -244,18 +244,18 @@ planets = [
             "Aqueous Liquids": 36,
             "Base Metals": 71,
             "Carbon Compounds": 73,
-            "Microorganisms": 61,
+            "Microorganisms": 62,
             "Noble Metals": 43
         }
     },
     {
         "id": "J105433 II (Storm)",
         "resources": {
-            "Aqueous Liquids": 62,
-            "Base Metals": 85,
+            "Aqueous Liquids": 63,
+            "Base Metals": 86,
             "Ionic Solutions": 34,
             "Noble Gas": 42,
-            "Suspended Plasma": 64
+            "Suspended Plasma": 65
         }
     },
     {
@@ -263,16 +263,16 @@ planets = [
         "resources": {
             "Aqueous Liquids": 33,
             "Base Metals": 75,
-            "Carbon Compounds": 75,
-            "Microorganisms": 61,
-            "Noble Metals": 43
+            "Carbon Compounds": 76,
+            "Microorganisms": 62,
+            "Noble Metals": 42
         }
     },
     {
         "id": "J105433 IV (Lava)",
         "resources": {
-            "Base Metals": 43,
-            "Felsic Magma": 37,
+            "Base Metals": 42,
+            "Felsic Magma": 36,
             "Heavy Metals": 65,
             "Non-CS Crystals": 47,
             "Suspended Plasma": 48
@@ -281,7 +281,7 @@ planets = [
     {
         "id": "J105433 IX (Gas)",
         "resources": {
-            "Aqueous Liquids": 50,
+            "Aqueous Liquids": 51,
             "Base Metals": 70,
             "Ionic Solutions": 54,
             "Noble Gas": 65,
@@ -291,8 +291,8 @@ planets = [
     {
         "id": "J105433 V (Temperate)",
         "resources": {
-            "Aqueous Liquids": 47,
-            "Autotrophs": 63,
+            "Aqueous Liquids": 46,
+            "Autotrophs": 64,
             "Carbon Compounds": 82,
             "Complex Organisms": 37,
             "Microorganisms": 60
@@ -301,31 +301,31 @@ planets = [
     {
         "id": "J105433 VI (Gas)",
         "resources": {
-            "Aqueous Liquids": 53,
+            "Aqueous Liquids": 54,
             "Base Metals": 69,
             "Ionic Solutions": 53,
             "Noble Gas": 64,
-            "Reactive Gas": 31
+            "Reactive Gas": 30
         }
     },
     {
         "id": "J105433 VII (Barren)",
         "resources": {
-            "Aqueous Liquids": 34,
+            "Aqueous Liquids": 33,
             "Base Metals": 70,
             "Carbon Compounds": 74,
-            "Microorganisms": 59,
+            "Microorganisms": 60,
             "Noble Metals": 44
         }
     },
     {
         "id": "J105433 VIII (Gas)",
         "resources": {
-            "Aqueous Liquids": 52,
+            "Aqueous Liquids": 53,
             "Base Metals": 71,
-            "Ionic Solutions": 53,
+            "Ionic Solutions": 54,
             "Noble Gas": 67,
-            "Reactive Gas": 31
+            "Reactive Gas": 30
         }
     },
     {
@@ -334,7 +334,7 @@ planets = [
             "Aqueous Liquids": 52,
             "Base Metals": 71,
             "Ionic Solutions": 56,
-            "Noble Gas": 66,
+            "Noble Gas": 67,
             "Reactive Gas": 23
         }
     }
@@ -346,27 +346,41 @@ planets = [
 current_assignments = {
     'Tyler Typical': {
         "J105433 II (Storm)": "Aqueous Liquids",
+        "J105433 III (Barren)": "Microorganisms",
         "J105433 IV (Lava)": "Non-CS Crystals",
         "J105433 V (Temperate)": "Complex Organisms",
-        "J105433 VIII (Gas)": "Ionic Solutions",
-        "J105433 III (Barren)": "Base Metals"
+        "J105433 VIII (Gas)": "Aqueous Liquids"
+    },
+    'Typer Typical': {
+        "J105433 II (Storm)": "Base Metals",
+        "J105433 IV (Lava)": "Heavy Metals",
+        "J105433 V (Temperate)": "Carbon Compounds",
+        "J105433 VI (Gas)": "Aqueous Liquids",
+        "J105433 X (Gas)": "Ionic Solutions"
+    },
+    'Tyler Atypical': {
+        "J105433 II (Storm)": "Base Metals",
+        "J105433 IV (Lava)": "Heavy Metals",
+        "J105433 VI (Gas)": "Aqueous Liquids",
+        "J105433 VIII (Gas)": "Aqueous Liquids",
+        "J105433 X (Gas)": "Ionic Solutions"
     },
     'Dunstin Checksin': {
         "J105433 II (Storm)": "Base Metals",
-        "J105433 III (Barren)": "Carbon Compounds",
+        "J105433 III (Barren)": "Microorganisms",
         "J105433 IV (Lava)": "Heavy Metals",
-        "J105433 V (Temperate)": "Microorganisms",
+        "J105433 V (Temperate)": "Carbon Compounds",
         "J105433 VIII (Gas)": "Noble Gas"
     },
     'Xauthuul': {
-        "J105433 IV (Lava)": "Heavy Metals",
         "J105433 II (Storm)": "Base Metals",
         "J105433 III (Barren)": "Microorganisms",
-        "J105433 V (Temperate)": "Aqueous Liquids",
+        "J105433 IV (Lava)": "Heavy Metals",
+        "J105433 V (Temperate)": "Complex Organisms",
         "J105433 X (Gas)": "Ionic Solutions"
     },
     'Haulen Datore': {
-        "J105433 II (Storm)": "Aqueous Liquids"
+        "J105433 IV (Lava)": "Non-CS Crystals"
     }
 }
 
