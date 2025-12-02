@@ -2,18 +2,18 @@
 
 This toolkit automates the optimization of Planetary Interaction (PI) in EVE Online. It consists of two main tools:
 
-*   **Scanner (planet_scanner.py):** Uses Computer Vision (OpenCV) and OCR (Tesseract) to read planet resource data directly from game screenshots.
-*   **Optimizer (main.py):** Uses a Minimum Cost Maximum Flow algorithm to assign your characters to specific planets to maximize resource yield based on your specific production goals.
+- **Scanner (planet_scanner.py):** Uses Computer Vision (OpenCV) and OCR (Tesseract) to read planet resource data directly from game screenshots.
+- **Optimizer (main.py):** Uses a Minimum Cost Maximum Flow algorithm to assign your characters to specific planets to maximize resource yield based on your specific production goals.
 
 ## Prerequisites
 
 ### System Requirements
 
-*   Python 3.10+
-*   Tesseract OCR Engine (Required for the scanner)
-    *   **Windows:** Download from [UB-Mannheim/tesseract](https://github.com/UB-Mannheim/tesseract/wiki) and ensure it's in your system PATH.
-    *   **Linux:** `sudo apt-get install tesseract-ocr`
-    *   **macOS:** `brew install tesseract`
+- Python 3.10+
+- Tesseract OCR Engine (Required for the scanner)
+    - **Windows:** Download from [UB-Mannheim/tesseract](https://github.com/UB-Mannheim/tesseract/wiki) and ensure it's in your system PATH.
+    - **Linux:** `sudo apt-get install tesseract-ocr`
+    - **macOS:** `brew install tesseract`
 
 ### Python Dependencies
 
@@ -108,6 +108,6 @@ Toon1:
 
 ## Troubleshooting
 
-*   **Scanner reads "0" as "6":** This is an interpolation artifact. The current script uses Linear interpolation and Gaussian blurring to fix this. Ensure you are using the latest version of `planet_scanner.py`.
-*   **"Tesseract not found":** Ensure the Tesseract binary is installed on your OS, not just the Python wrapper.
-*   **"Display not found":** If running on a headless Linux server (WSL), you cannot use the screen capture mode. You must provide a file path or directory.
+- **Scanner reads "0" as "6":** This is an interpolation artifact. The current script uses Linear interpolation and Gaussian blurring to fix this. Ensure you are using the latest version of `planet_scanner.py`.
+- **"Tesseract not found":** Ensure the Tesseract binary is installed on your OS, not just the Python wrapper.
+- **"Display not found":** If running on a headless Linux server (WSL), you cannot use the screen capture mode. You must provide a file path or directory.
