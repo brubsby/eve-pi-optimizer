@@ -98,20 +98,27 @@ def solve_mission(characters, resource_targets, planet_data):
 
 # 1. Define Characters
 chars = [
+    {'id': 'Tyler Typical', 'max_visits': 5, 'banned': []}, 
     {'id': 'Typer Typical', 'max_visits': 5, 'banned': []}, 
     {'id': 'Tyler Atypical', 'max_visits': 5, 'banned': []}, 
+    {'id': 'Dunstin Checksin', 'max_visits': 5, 'banned': []}, 
+    {'id': 'Xauthuul', 'max_visits': 5, 'banned': []}, 
+    {'id': 'Haulen Datore', 'max_visits': 1, 'banned': ['J105433 I', 'J105433 III', 'J105433 VII', 'J105433 V']}, 
+
+
 ]
 
 # 2. Define Demand (P1 naming convention)
 P1_targets = {
-    'Bacteria': 1,
-    'Proteins': 1,
-    'Toxic Metals': 2,
-    'Reactive Metals': 1,
-    'Electrolytes': 1,
-    'Water': 2,
-    'Biofuels': 1,
-    'Chiral Structures': 1,  
+    'Bacteria': 3,
+    'Proteins': 2,
+    'Toxic Metals': 4,
+    'Reactive Metals': 4,
+    'Electrolytes': 3,
+    'Water': 5,
+    'Biofuels': 2,
+    'Chiral Structures': 2,
+    'Oxygen': 1,
 }
 
 # 3. Translation Map (P1 Result -> P0 Resource)
@@ -149,107 +156,106 @@ for p1_name, amount in P1_targets.items():
 # 3. Define Universe
 planets = [
     {
-        'id': 'J105433 I (Barren)',
-        'resources': {
-            'Microorganisms': 100,
-            'Carbon Compounds': 100,
-            'Noble Metals': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 I (Barren)",
+        "resources": {
+            "Aqueous Liquids": 36,
+            "Base Metals": 71,
+            "Carbon Compounds": 73,
+            "Microorganisms": 61,
+            "Noble Metals": 43
         }
     },
     {
-        'id': 'J105433 II (Storm)',
-        'resources': {
-            'Ionic Solutions': 100,
-            'Noble Gas': 100,
-            'Suspended Plasma': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 II (Storm)",
+        "resources": {
+            "Aqueous Liquids": 62,
+            "Base Metals": 85,
+            "Ionic Solutions": 34,
+            "Noble Gas": 42,
+            "Suspended Plasma": 64
         }
     },
     {
-        'id': 'J105433 III (Barren)',
-        'resources': {
-            'Microorganisms': 100,
-            'Carbon Compounds': 100,
-            'Noble Metals': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 III (Barren)",
+        "resources": {
+            "Aqueous Liquids": 33,
+            "Base Metals": 75,
+            "Carbon Compounds": 75,
+            "Microorganisms": 61,
+            "Noble Metals": 43
         }
     },
     {
-        'id': 'J105433 IV (Lava)',
-        'resources': {
-            'Non-CS Crystals': 100,
-            'Suspended Plasma': 100,
-            'Heavy Metals': 100,
-            'Base Metals': 100,
-            'Felsic Magma': 100
+        "id": "J105433 IV (Lava)",
+        "resources": {
+            "Base Metals": 43,
+            "Felsic Magma": 37,
+            "Heavy Metals": 65,
+            "Non-CS Crystals": 47,
+            "Suspended Plasma": 48
         }
     },
     {
-        'id': 'J105433 V (Temperate)',
-        'resources': {
-            'Microorganisms': 100,
-            'Carbon Compounds': 100,
-            'Autotrophs': 100,
-            'Complex Organisms': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 IX (Gas)",
+        "resources": {
+            "Aqueous Liquids": 50,
+            "Base Metals": 70,
+            "Ionic Solutions": 54,
+            "Noble Gas": 65,
+            "Reactive Gas": 35
         }
     },
     {
-        'id': 'J105433 VI (Gas)',
-        'resources': {
-            'Ionic Solutions': 100,
-            'Reactive Gas': 100,
-            'Noble Gas': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 V (Temperate)",
+        "resources": {
+            "Aqueous Liquids": 47,
+            "Autotrophs": 63,
+            "Carbon Compounds": 82,
+            "Complex Organisms": 37,
+            "Microorganisms": 60
         }
     },
     {
-        'id': 'J105433 VII (Barren)',
-        'resources': {
-            'Microorganisms': 100,
-            'Carbon Compounds': 100,
-            'Noble Metals': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 VI (Gas)",
+        "resources": {
+            "Aqueous Liquids": 53,
+            "Base Metals": 69,
+            "Ionic Solutions": 53,
+            "Noble Gas": 64,
+            "Reactive Gas": 31
         }
     },
     {
-        'id': 'J105433 VIII (Gas)',
-        'resources': {
-            'Ionic Solutions': 100,
-            'Reactive Gas': 100,
-            'Noble Gas': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 VII (Barren)",
+        "resources": {
+            "Aqueous Liquids": 34,
+            "Base Metals": 70,
+            "Carbon Compounds": 74,
+            "Microorganisms": 59,
+            "Noble Metals": 44
         }
     },
     {
-        'id': 'J105433 IX (Gas)',
-        'resources': {
-            'Ionic Solutions': 100,
-            'Reactive Gas': 100,
-            'Noble Gas': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 VIII (Gas)",
+        "resources": {
+            "Aqueous Liquids": 52,
+            "Base Metals": 71,
+            "Ionic Solutions": 53,
+            "Noble Gas": 67,
+            "Reactive Gas": 31
         }
     },
     {
-        'id': 'J105433 X (Gas)',
-        'resources': {
-            'Ionic Solutions': 100,
-            'Reactive Gas': 100,
-            'Noble Gas': 100,
-            'Base Metals': 100,
-            'Aqueous Liquids': 100
+        "id": "J105433 X (Gas)",
+        "resources": {
+            "Aqueous Liquids": 52,
+            "Base Metals": 71,
+            "Ionic Solutions": 56,
+            "Noble Gas": 66,
+            "Reactive Gas": 23
         }
     }
 ]
-
 
 total_yield, orders = solve_mission(chars, targets, planets)
 
