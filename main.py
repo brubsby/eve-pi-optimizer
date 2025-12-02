@@ -1,6 +1,9 @@
 import networkx as nx
 
-def solve_mission(characters, resource_targets, planet_data):
+def solve_mission(characters, resource_targets, planet_data, current_assignments=None, switching_cost=1000000):
+    if current_assignments is None:
+        current_assignments = {}
+
     G = nx.DiGraph()
     source, sink = "Source", "Sink"
     
@@ -10,13 +13,36 @@ def solve_mission(characters, resource_targets, planet_data):
     for char in characters:
         G.add_edge(source, char['id'], capacity=char['max_visits'], weight=0)
         
+        # Get this character's current planets (if any)
+        # Structure expected: {'CharName': ['PlanetID1', 'PlanetID2']}
+        # or {'CharName': {'PlanetID1': 'Resource'}}
+        char_current_planets = current_assignments.get(char['id'], [])
+        
         # Layer 2: Characters -> Planets (Capacity = 1)
         for planet in planet_data:
+            p_id = planet['id']
+            
             # Skip if planet is banned for this character
-            if 'banned' in char and planet['id'] in char['banned']:
+            if 'banned' in char and p_id in char['banned']:
                 continue
             
-            G.add_edge(char['id'], planet['id'], capacity=1, weight=0)
+            # Determine cost: 0 if already set up, switching_cost if new
+            # We use a soft check to handle potential string mismatches if user drops suffixes
+            # But exact match is preferred for safety
+            edge_weight = 0
+            
+            # specific check: Is p_id in the user's list for this char?
+            # We assume the user provides IDs matching the planet list.
+            is_existing = False
+            if isinstance(char_current_planets, dict):
+                is_existing = p_id in char_current_planets
+            elif isinstance(char_current_planets, list):
+                is_existing = p_id in char_current_planets
+            
+            if not is_existing:
+                edge_weight = switching_cost
+
+            G.add_edge(char['id'], p_id, capacity=1, weight=edge_weight)
 
     # Layer 3 & 4: Planets -> Planet|Resource -> Resource Type
     for planet in planet_data:
@@ -79,18 +105,61 @@ def solve_mission(characters, resource_targets, planet_data):
                         total_abundance += planet['resources'][res_name]
 
         # C. Assign items to visitors
-        # Since cost is property of the planet, not the person, any visitor 
-        # can take any of the assigned items.
-        for i, visitor in enumerate(visitors):
-            if i < len(items_to_collect):
-                item = items_to_collect[i]
-                abundance = planet['resources'][item]
-                work_orders[visitor].append(f"Visit {p_id} -> Collect {item} (Yield: {abundance})")
+        # We attempt to match visitors to their existing resource assignments to minimize churn
+        
+        assignments = {} # visitor -> item
+        unassigned_visitors = list(visitors)
+        unassigned_items = list(items_to_collect)
+        
+        # 1. Greedy Match: Try to give visitors their existing resource if available
+        for visitor in list(unassigned_visitors):
+            curr_assigns = current_assignments.get(visitor, {})
+            preferred_res = None
+            if isinstance(curr_assigns, dict):
+                preferred_res = curr_assigns.get(p_id)
+            
+            if preferred_res and preferred_res in unassigned_items:
+                assignments[visitor] = preferred_res
+                unassigned_visitors.remove(visitor)
+                unassigned_items.remove(preferred_res)
+        
+        # 2. Fill remaining
+        for visitor in unassigned_visitors:
+            if unassigned_items:
+                item = unassigned_items.pop(0)
+                assignments[visitor] = item
             else:
-                # Edge case: Character visited but didn't pick anything 
-                # (This happens if optimization routed them there just to pass through, 
-                # though in this specific graph structure that's rare/impossible)
-                work_orders[visitor].append(f"Visit {p_id} -> No Collection")
+                assignments[visitor] = None
+
+        # 3. Generate Orders
+        for visitor in visitors:
+            item = assignments[visitor]
+            if item:
+                abundance = planet['resources'][item]
+                
+                # Status Checks
+                curr_assigns = current_assignments.get(visitor, {})
+                has_history = bool(curr_assigns)
+                is_new_planet = p_id not in curr_assigns
+                
+                is_head_switch = False
+                if not is_new_planet and isinstance(curr_assigns, dict):
+                    if curr_assigns.get(p_id) != item:
+                        is_head_switch = True
+                
+                msg = f"{p_id:<25} {item:<20} (Yield: {abundance:<3})"
+                
+                if is_new_planet:
+                    if not has_history:
+                        msg += " [NEW PLANET]"
+                    else:
+                        msg += " [PLANET SWITCH]"
+                elif is_head_switch:
+                    msg += " [HEAD SWITCH]"
+                    
+                work_orders[visitor].append(msg)
+            else:
+                work_orders[visitor].append(f"{p_id:<25} {'No Collection':<20}")
 
     return total_abundance, work_orders
 
@@ -137,7 +206,7 @@ translation_map = {
     'Proteins': 'Complex Organisms',
     'Reactive Metals': 'Base Metals',
     'Silicon': 'Felsic Magma',
-    'Toxic Metals': 'Heavy Metals', # Note: Ensure 'Heavy Metals' exists in your planet data
+    'Toxic Metals': 'Heavy Metals',
     'Water': 'Aqueous Liquids'
 }
 
@@ -257,7 +326,41 @@ planets = [
     }
 ]
 
-total_yield, orders = solve_mission(chars, targets, planets)
+# 4. Define Current Assignments (Optional)
+# Map Character ID -> List of Planet IDs (or Dict of PlanetID: Resource)
+# Use this to minimize switching costs.
+current_assignments = {
+    'Tyler Typical': {
+        "J105433 II (Storm)": "Aqueous Liquids",
+        "J105433 IV (Lava)": "Non-CS Crystals",
+        "J105433 V (Temperate)": "Complex Organisms",
+        "J105433 VIII (Gas)": "Ionic Solutions",
+        "J105433 III (Barren)": "Base Metals"
+    },
+    'Dunstin Checksin': {
+        "J105433 II (Storm)": "Base Metals",
+        "J105433 III (Barren)": "Carbon Compounds",
+        "J105433 IV (Lava)": "Heavy Metals",
+        "J105433 V (Temperate)": "Microorganisms",
+        "J105433 VIII (Gas)": "Noble Gas"
+    },
+    'Xauthuul': {
+        "J105433 IV (Lava)": "Heavy Metals",
+        "J105433 II (Storm)": "Base Metals",
+        "J105433 III (Barren)": "Microorganisms",
+        "J105433 V (Temperate)": "Aqueous Liquids",
+        "J105433 X (Gas)": "Ionic Solutions"
+    },
+    'Haulen Datore': {
+        "J105433 II (Storm)": "Aqueous Liquids"
+    }
+}
+
+# Cost to switch to a new planet (vs staying on existing one).
+# Set high to prioritize stability, or low to prioritize pure yield.
+SWITCHING_COST = 20 
+
+total_yield, orders = solve_mission(chars, targets, planets, current_assignments, SWITCHING_COST)
 
 print(f"Total System Abundance: {total_yield}\n")
 print("--- MISSION ASSIGNMENTS ---")
